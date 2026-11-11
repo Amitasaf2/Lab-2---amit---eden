@@ -2,21 +2,19 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Reads a subset-sum problem, runs two worker threads, and prints a solution
- * when one is found.
+ * Reads input, starts the search workers, and displays the result.
  */
 public class TestThreadCheckArray {
     /**
-     * Creates the command-line application.
+     * Creates an application entry-point container.
      */
     public TestThreadCheckArray() {
     }
 
     /**
-     * Reads input values and a target sum from standard input, then starts and
-     * joins the two search workers.
+     * Runs the interactive subset-sum search.
      *
-     * @param args command-line arguments (not used)
+     * @param args command-line arguments, which are not used
      */
     public static void main(String[] args) {
         try (Scanner input = new Scanner(System.in)) {

@@ -1,30 +1,22 @@
 import java.util.ArrayList;
 
 /**
- * Searches one branch of the subset-sum problem in a separate thread.
- *
- * <p>Two instances can search complementary branches over the same shared
- * input. The instance named {@code thread1} includes the final input value in
- * its initial branch; the other instance starts without it.</p>
+ * Searches a shared list of integers for a combination that reaches a target.
  */
 public class ThreadCheckArray implements Runnable {
-    /** Whether this worker has found a solution. */
+    /** Indicates whether this worker has found a solution. */
     private boolean flag;
-
-    /** Marks the input values selected by this worker's solution. */
+    /** Primitive result flags corresponding to the shared input list. */
     private boolean[] winArray;
-
     /** Shared input and result state. */
     SharedData sd;
-
-    /** Input values to search. */
+    /** Input values to examine. */
     ArrayList<Integer> array;
-
-    /** Target sum to find. */
+    /** Target value to find. */
     int b;
 
     /**
-     * Creates a worker using the input and target held in shared state.
+     * Creates a worker for the supplied shared state.
      *
      * @param sd shared input and result state
      */
@@ -38,26 +30,25 @@ public class ThreadCheckArray implements Runnable {
     }
 
     /**
-     * Recursively searches the first {@code n} values for a subset summing
-     * to {@code b}.
+     * Recursively searches the list for a solution.
      *
-     * @param n number of values in the current search prefix
-     * @param b remaining sum required from that prefix
+     * @param n number of list positions currently considered
+     * @param b remaining target value
      */
     void rec(int n, int b) {
         synchronized (sd) {
             if (sd.getFlag()) return;
         }
         if (n == 1) {
-            if(b == 0 || b == array.get(n-1)) {
+            if (b == 0 || b == array.get(n - 1)) {
                 flag = true;
                 synchronized (sd) { sd.setFlag(true); }
             }
-            if (b == array.get(n-1)) winArray[n-1] = true;
+            if (b == array.get(n - 1)) winArray[n - 1] = true;
             return;
         }
 
-        rec(n-1, b - array.get(n-1));
+        rec(n - 1, b - array.get(n - 1));
         if (flag) winArray[n-1] = true;
         synchronized (sd) {
             if (sd.getFlag()) return;
@@ -66,15 +57,15 @@ public class ThreadCheckArray implements Runnable {
     }
 
     /**
-     * Runs the worker's assigned search branch and publishes a found solution
-     * to the shared state.
+     * Starts this worker's search and publishes its result when successful.
      */
+    @Override
     public void run() {
         if (array.size() != 1)
             if (Thread.currentThread().getName().equals("thread1"))
-                rec(array.size()-1, b - array.get(array.size() - 1));
+                rec(array.size() - 1, b - array.get(array.size() - 1));
             else
-                rec(array.size()-1, b);
+                rec(array.size() - 1, b);
         if (array.size() == 1)
             if (b == array.get(0) && !flag) {
                 winArray[0] = true;

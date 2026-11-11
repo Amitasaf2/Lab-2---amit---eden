@@ -1,53 +1,42 @@
 import java.util.ArrayList;
 
 /**
- * Holds the input values and the shared result state used by the worker threads.
- *
- * <p>The input values are stored in an {@code ArrayList<Integer>}. The result
- * remains a primitive {@code boolean[]} whose entries correspond by index to
- * the input values.</p>
+ * Stores the input values and the shared state used by the worker threads.
  */
 public class SharedData {
-    /** Input values to search. */
+    /** The input values being examined by the worker threads. */
     private ArrayList<Integer> array;
-
-    /** Result flags corresponding by index to {@link #array}. */
+    /** Primitive result flags corresponding to the input values. */
     private boolean[] winArray;
-
-    /** Indicates that a worker has found a solution. */
+    /** Indicates whether a solution has been found. */
     private boolean flag;
-
-    /** Target sum for the subset-sum search. */
+    /** The target value for the search. */
     private final int b;
 
     /**
-     * Creates shared state for checking whether a subset of {@code array} sums
-     * to {@code b}.
+     * Creates shared data for the supplied values and target.
      *
-     * @param array the input values; its order defines the indexes in the
-     *              result array
-     * @param b the target sum
+     * @param array the input values stored as an {@code ArrayList<Integer>}
+     * @param b the target value to find
      */
     public SharedData(ArrayList<Integer> array, int b) {
         this.array = array;
         this.b = b;
-        this.winArray = new boolean[array.size()];
     }
 
     /**
-     * Returns the result flags, where each true entry marks a value included
-     * in the discovered solution.
+     * Returns the primitive result flags.
      *
-     * @return the result flags, in input order
+     * @return the boolean flags identifying values in a solution
      */
     public boolean[] getWinArray() {
         return winArray;
     }
 
     /**
-     * Replaces the result flags.
+     * Stores the primitive result flags.
      *
-     * @param winArray result flags corresponding by index to the input values
+     * @param winArray the boolean flags identifying values in a solution
      */
     public void setWinArray(boolean[] winArray) {
         this.winArray = winArray;
@@ -56,33 +45,32 @@ public class SharedData {
     /**
      * Returns the input values.
      *
-     * @return the input values in their original order
+     * @return the values stored as an {@code ArrayList<Integer>}
      */
     public ArrayList<Integer> getArray() {
         return array;
     }
 
     /**
-     * Returns the target sum.
+     * Returns the target value.
      *
-     * @return the target sum
+     * @return the target value
      */
     public int getB() {
         return b;
     }
 
     /**
-     * Reports whether a worker has found a solution.
+     * Reports whether a solution has been found.
      *
-     * @return {@code true} if a solution has been found; {@code false}
-     *         otherwise
+     * @return {@code true} when a solution has been found; otherwise {@code false}
      */
     public boolean getFlag() {
         return flag;
     }
 
     /**
-     * Updates whether a solution has been found.
+     * Updates the shared solution status.
      *
      * @param flag {@code true} when a solution has been found
      */
